@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const webpack = require('webpack')
 module.exports = {
     mode: 'development',
     entry: './src/index.js',
@@ -27,6 +28,7 @@ module.exports = {
     output: {
         filename: 'bundle.[hash:8].js',
         path: path.resolve(__dirname, 'dist')
+        // publicPath: 'http://www.cdn.com'
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -39,23 +41,47 @@ module.exports = {
             hash: true
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].[hash:8].css',
-            chunkFilename: '[id].css'
+            filename: 'css/[name].[hash:8].css'
+        }),
+        new webpack.ProvidePlugin({ // 全局变量引入：给每个模块中都注入$
+            $: 'jquery'
         })
     ],
+    // externals: { // 不需要打包
+    //     jquery: "jQuery"
+    // },
     module: {
-        rules: [ // loader默认：从右到左，从下到上执行
+        rules: [
             {
-                test: /\.js$/,
-                use: {
-                    loader: 'eslint-loader',
-                    options: {
-                        enforce: 'pre', // pre: 在普通loader之前执行，post: 在普通loader之后执行
-                    }
-                },
-                exclude: /node_modules/,
-                include: path.resolve(__dirname, 'src')
+                test: /\.html$/,
+                use: 'html-withimg-loader' // 对background(url)引入对图片进行编码
             },
+            {
+                test: /\.(png|jpg|gif|svg|jpeg|gif)$/,
+                // 做一个限制，当我们的图片 小于多少k的时候，用base64  来转化
+                // 否则用file-loader产生真实的图片,url-loader可以调用file-loader
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 100,
+                        outputPath: 'img/'
+                        // publicPath: 'http://www.img.com'
+                    }
+                }
+            },
+            // loader默认：从右到左，从下到上执行
+            // {
+            //     test: /\.js$/,
+            //     use: {
+            //         loader: 'eslint-loader',
+            //         options: {
+            //             cache: true,
+            //             fix: true
+            //         }
+            //     },
+            //     enforce: 'pre', // pre: 在普通loader之前执行，post: 在普通loader之后执行
+            //     exclude: /node_modules/
+            // },
             {
                 test: /\.js$/,
                 use: {
@@ -77,14 +103,29 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    MiniCssExtractPlugin.loader, 
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: '../'
+                        }
+                    },
                     'css-loader',
                     'postcss-loader'
                 ]
             },
             {
                 test: /\.less$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader']
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: '../'
+                        }
+                    },
+                    'css-loader', 
+                    'postcss-loader', 
+                    'less-loader'
+                ]
             }
         ]
     }
