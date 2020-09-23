@@ -1,0 +1,22 @@
+{
+  "name": "webpack-study",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/wanghao12345/webpack-study.git",
+  "author": "wanghao <1750110604@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "dev": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "css-loader": "^4.3.0",
+    "html-webpack-plugin": "^4.5.0",
+    "less": "^3.12.2",
+    "less-loader": "^7.0.1",
+    "style-loader": "^1.2.1",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
