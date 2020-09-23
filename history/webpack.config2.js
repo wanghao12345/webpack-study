@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: './src/index.js',
     devServer: {
         port: 3000,
@@ -44,36 +44,7 @@ module.exports = {
         })
     ],
     module: {
-        rules: [ // loader默认：从右到左，从下到上执行
-            {
-                test: /\.js$/,
-                use: {
-                    loader: 'eslint-loader',
-                    options: {
-                        enforce: 'pre', // pre: 在普通loader之前执行，post: 在普通loader之后执行
-                    }
-                },
-                exclude: /node_modules/,
-                include: path.resolve(__dirname, 'src')
-            },
-            {
-                test: /\.js$/,
-                use: {
-                    loader: 'babel-loader',
-                    options: { // 用babel-loader 需要把Es6 -Es5: @babel/core调用@babel/preset-env进行转化
-                        presets: [
-                            '@babel/preset-env'
-                        ],
-                        plugins: [
-                            ["@babel/plugin-proposal-decorators", { "legacy": true }],
-                            ["@babel/plugin-proposal-class-properties", { "loose" : true }],
-                            "@babel/plugin-transform-runtime"
-                        ]
-                    }
-                },
-                include: path.resolve(__dirname, 'src'),
-                exclude: /node_modules/
-            },
+        rules: [
             {
                 test: /\.css$/,
                 use: [
